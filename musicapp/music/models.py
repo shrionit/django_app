@@ -10,7 +10,9 @@ class Song(models.Model):
     song_duration = models.TimeField(null=True)
     song_scope = models.CharField(max_length=20, choices=SCOPE)
     song_released_on = models.DateField(blank=True, null=True)
-    song_added_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    song_added_by = models.ForeignKey(User,
+                                      null=True,
+                                      on_delete=models.CASCADE)
 
 
 class Playlist(models.Model):
