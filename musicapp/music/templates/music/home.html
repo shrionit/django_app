@@ -1,0 +1,17 @@
+{% extends 'music/base.html' %}
+{% block title %} /home {% endblock %}
+
+{% block home_link %}
+<li class="nav-item active">
+    <a class="nav-link" href={% url 'music:home' %}>Home <span class="sr-only">(current)</span></a>
+</li>
+{% endblock home_link %}
+
+{% block current_username %}
+{{user.username}}
+{% endblock current_username %}Ram
+{% block content %}
+
+<h1 class="text-black">This is home</h1>
+
+{% endblock %}

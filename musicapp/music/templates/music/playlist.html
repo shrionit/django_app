@@ -1,0 +1,19 @@
+{% extends 'music/base.html' %}
+
+{% block title %} /playlist {% endblock %}
+
+{% block playlist_link %}
+<li class="nav-item active">
+    <a class="nav-link" href={% url 'music:playlist' %}>Playlist <span class="sr-only">(current)</span></a>
+</li>
+{% endblock playlist_link %}
+
+{% block current_username %}
+{{user.username}}
+{% endblock current_username %}
+
+{% block content %}
+
+<h1 class="text-black">This is Playlist</h1>
+
+{% endblock %}

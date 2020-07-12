@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <title>{% block title %}Music{% endblock %}</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href={% static 'css/bootstrap.css/bootstrap.min.css' %}>
+    <link rel="stylesheet" href={% static 'css/fontawsome.css/all.css' %}>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src={% static 'js/jquery' %}></script>
+    <script src={% static 'js/popper.js/popper.js' %}></script>
+    <script src={% static 'js/bootstrap.js/bootstrap.min.js' %}></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center align-items-center">
+            <a class="navbar-brand" href="/music/">Music App <i class="fas fa-music fa-sm fa-fw"></i> </a>
+        </nav>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-5 text-center">{% block formtitle %}Form{% endblock %}</h1>
+                <p class="lead text-center">{% block formsubtitle %}fill form to enter{% endblock %}</p>
+                <hr class="my-2">
+                {% block formfield %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <!-- Optional JavaScript -->
+</body>
+
+</html>

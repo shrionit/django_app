@@ -1,0 +1,37 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Login to Music App
+{% endblock title %}
+
+{% block formtitle %}
+Login
+{% endblock formtitle %}
+
+{% block formsubtitle %}
+Login to listen cool music
+{% endblock formsubtitle %}
+
+{% block formfield %}
+<form method="POST" action={% url 'music:login' %}>
+    {% csrf_token %}
+    {% if not form %}
+    <div class="form-group">
+        <label for="uname">Username:</label>
+        <input type="text" class="form-control" id="uname" placeholder="Enter username" name="username" required>
+        <div class="valid-feedback">Valid.</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    <div class="form-group">
+        <label for="pwd">Password:</label>
+        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
+        <div class="valid-feedback">Valid.</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    {% else %}
+    {{form.as_p}}
+    {% endif %}
+    <p>Don't have an account, create one <a href={% url "music:signup" %} class="badge badge-danger">here</a></p>
+    <button type="submit" class="btn btn-primary">Login <i class="fas fa-arrow-right fa-sm fa-fw"></i> </button>
+</form>
+{% endblock formfield %}

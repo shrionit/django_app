@@ -1,0 +1,89 @@
+{% extends 'music/base.html' %}
+
+{% block title %} /songs {% endblock %}
+
+{% block songs_link %}
+<li class="nav-item active">
+    <a class="nav-link" href={% url 'music:songs' %}>Songs <span class="sr-only">(current)</span></a>
+</li>
+{% endblock songs_link %}
+
+{% block current_username %}
+{{user.username}}
+{% endblock current_username %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="container add-song">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <input type="file" class="card-img-top fancyupload" accept="audio/*" multiple>
+                    <div class="card-body">
+                        <h4 class="card-title">Title</h4>
+                        <p class="card-text">Text</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Heading</h5>
+                            <small>small</small>
+                        </div>
+                        <p class="mb-1">Paragraph</p>
+                        <small>paragraph footer</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Heading</h5>
+                            <small>small</small>
+                        </div>
+                        <p class="mb-1">Paragraph</p>
+                        <small>paragraph footer</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Heading</h5>
+                            <small>small</small>
+                        </div>
+                        <p class="mb-1">Paragraph</p>
+                        <small>paragraph footer</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container songs-list">
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Heading</h5>
+                    <small>small</small>
+                </div>
+                <p class="mb-1">Paragraph</p>
+                <small>paragraph footer</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Heading</h5>
+                    <small>small</small>
+                </div>
+                <p class="mb-1">Paragraph</p>
+                <small>paragraph footer</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start disabled">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Heading</h5>
+                    <small>small</small>
+                </div>
+                <p class="mb-1">Paragraph</p>
+                <small>paragraph footer</small>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
