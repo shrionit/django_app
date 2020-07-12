@@ -31,21 +31,20 @@ def login_view(request):
         user_name = request.POST['username']
         user_pass = request.POST['password']
         usr = authenticate(request, username=user_name, password=user_pass)
-        print(user_name, user_pass, usr)
         if usr is not None:
             login(request, usr)
             return redirect('music:home')
         else:
-            return render(request, 'accounts/test.html', {
-                'pgname': 'Login',
-                'data': form.error_messages
+            return render(request, 'accounts/login.html', {
+                'red': True,
+                'data': form.error_messages,
+                'form': form,
             })
-        return render(request, 'accounts/test.html', {
-            'pgname': 'Login',
-            'data': form
-        })
     else:
-        return render(request, 'accounts/login.html', {'form': form})
+        return render(request, 'accounts/login.html', {
+            'form': form,
+            'red': False,
+        })
 
 
 def register_view(request):
@@ -60,11 +59,18 @@ def register_view(request):
             user.save()
             login(request, user)
             return render(request, 'music/home.html')
-    return render(request, 'accounts/signup.html', {'form': form})
+    return render(
+        request,
+        'accounts/signup.html',
+        {
+            'form': form,
+        },
+    )
 
 
 def logout_view(request):
     logout(request)
+    return render(request, 'accounts/logout.html')
 
 
 @login_required(login_url='/music/')
@@ -77,7 +83,73 @@ def home_view(request):
 
 @login_required(login_url='/music/')
 def songs_view(request):
-    return render(request, 'music/songs.html', {'pg_active': True})
+    print(request.user.song_set.all())
+    songs_list = [
+        {
+            'id': 1,
+            'title': 'Alone',
+            'duration': '3:04',
+            'is_fav': True
+        },
+        {
+            'id': 2,
+            'title': 'Dark',
+            'duration': '4:45',
+            'is_fav': False
+        },
+        {
+            'id': 3,
+            'title': 'Time',
+            'duration': '3:55',
+            'is_fav': True
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+        {
+            'id': 4,
+            'title': 'Quantum',
+            'duration': '3:17',
+            'is_fav': False
+        },
+    ]
+    return render(request, 'music/songs.html', {
+        'pg_active': True,
+        'songs_list': songs_list
+    })
 
 
 @login_required(login_url='/music/')

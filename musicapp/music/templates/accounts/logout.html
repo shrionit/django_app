@@ -1,0 +1,10 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+{% block formfield %}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">You're logged out</h4>
+        <p class="card-text">Click <a href={% url 'music:home' %} class="badge badge-primary">here</a> to login.</p>
+    </div>
+</div>
+{% endblock formfield %}

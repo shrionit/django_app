@@ -11,33 +11,44 @@ SignUp
 {% block formsubtitle %}
 signup to listen cool music
 {% endblock formsubtitle %}
-
+{% load crispy_forms_tags %}
 {% block formfield %}
-<form action={% url 'music:signup' %} method="POST">
-    {% csrf_token %}
-    {% if not form %}
-    <div class="form-group">
-        <label for="uname">Username:</label>
-        <input type="text" class="form-control" id="uname" placeholder="Enter username" name="user_name" required>
-        <div class="valid-feedback">Valid.</div>
-        <div class="invalid-feedback">Please fill out this field.</div>
-    </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" name="user_email" id="email" placeholder="example@mail.com" required>
-        <div class="valid-feedback">Valid.</div>
-        <div class="invalid-feedback">Please fill out this field.</div>
-    </div>
-    <div class="form-group">
-        <label for="pwd">Password:</label>
-        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="user_pass" required>
-        <div class="valid-feedback">Valid.</div>
-        <div class="invalid-feedback">Please fill out this field.</div>
-    </div>
-    {% else %}
-    {{form.as_p}}
-    {% endif %}
-    <p>Already have an account, login <a href={% url "music:login" %} class="badge badge-success">here</a></p>
-    <button type="submit" class="btn btn-primary">Signup</button>
-</form>
+<div class="container col-lg-4">
+    <form action={% url 'music:signup' %} method="POST">
+        {% csrf_token %}
+        {% if not form %}
+        <div class="form-group">
+            <label for="uname">Username:</label>
+            <input type="text" class="form-control" id="uname" placeholder="Enter username" name="username" required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">Please fill out this field.</div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="user_email" id="email" placeholder="example@mail.com"
+                required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">Please fill out this field.</div>
+        </div>
+        <div class="form-group">
+            <label for="pwd">Password:</label>
+            <input type="password" class="form-control" id="pwd1" placeholder="Enter password" name="password1"
+                required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">Please fill out this field.</div>
+        </div>
+        <div class="form-group">
+            <label for="pwd">Confirm Password:</label>
+            <input type="password" class="form-control" id="pwd2" placeholder="Enter password" name="password2"
+                required>
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">Please fill out this field.</div>
+        </div>
+        {% else %}
+        {{ form | crispy }}
+        {% endif %}
+        <p>Already have an account, login <a href={% url "music:login" %} class="badge badge-success">here</a></p>
+        <button type="submit" class="btn btn-primary">Signup</button>
+    </form>
+</div>
 {% endblock formfield %}
