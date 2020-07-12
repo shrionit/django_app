@@ -1,7 +1,11 @@
 env/
 .vscode/
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.scss
+*.map
 
 LICENSE
 README.md
