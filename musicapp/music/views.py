@@ -83,72 +83,8 @@ def home_view(request):
 
 @login_required(login_url='/music/')
 def songs_view(request):
-    print(request.user.song_set.all())
-    songs_list = [
-        {
-            'id': 1,
-            'title': 'Alone',
-            'duration': '3:04',
-            'is_fav': True
-        },
-        {
-            'id': 2,
-            'title': 'Dark',
-            'duration': '4:45',
-            'is_fav': False
-        },
-        {
-            'id': 3,
-            'title': 'Time',
-            'duration': '3:55',
-            'is_fav': True
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-        {
-            'id': 4,
-            'title': 'Quantum',
-            'duration': '3:17',
-            'is_fav': False
-        },
-    ]
     return render(request, 'music/songs.html', {
         'pg_active': True,
-        'songs_list': songs_list
     })
 
 

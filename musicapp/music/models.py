@@ -7,12 +7,17 @@ SCOPE = [('PUBLIC', 'PUBLIC'), ('PRIVATE', 'PRIVATE'),
 class Song(models.Model):
     song_title = models.CharField(max_length=250)
     song_artist = models.CharField(max_length=250)
-    song_duration = models.TimeField(null=True)
+    song_duration = models.CharField(max_length=6, default='00:00')
+    song_file = models.FileField(blank=True, null=True)
     song_scope = models.CharField(max_length=20, choices=SCOPE)
-    song_released_on = models.DateField(blank=True, null=True)
+    song_released_on = models.CharField(max_length=4, blank=True, null=True)
+    song_cover = models.ImageField(blank=True, null=True, upload_to='img')
     song_added_by = models.ForeignKey(User,
                                       null=True,
                                       on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.song_title
 
 
 class Playlist(models.Model):

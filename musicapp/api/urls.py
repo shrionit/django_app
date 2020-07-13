@@ -13,5 +13,9 @@ router.register(r'playlists', views.PlaylistViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls',
-                              namespace='rest_framework'))
+                              namespace='rest_framework')),
+    path('songlist/<uid>', views.song_list, name='songList'),
+    path('addsong/<uid>', views.add_song, name='addSong'),
+    path('deletesong/<uid>/<sid>', views.delete_song, name='deleteSong'),
+    path('updatesong/<uid>/<sid>', views.update_song, name='updateSong'),
 ]
