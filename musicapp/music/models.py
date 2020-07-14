@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 SCOPE = [('PUBLIC', 'PUBLIC'), ('PRIVATE', 'PRIVATE'),
          ('FOLLOWERS', 'FOLLOWERS')]
+from django.utils import timezone
 
 
 class Song(models.Model):
@@ -21,11 +22,21 @@ class Song(models.Model):
 
 
 class Playlist(models.Model):
-    playlist_title = models.CharField(max_length=250)
+    playlist_title = models.CharField(max_length=250, unique=True)
     playlist_user = models.ForeignKey(User, on_delete=models.CASCADE)
     playlist_scope = models.CharField(max_length=20, choices=SCOPE)
+    playlist_created_on = models.DateTimeField(default=timezone.now)
 
 
 class Playlist_Song(models.Model):
-    playlist_id = models.ForeignKey(Playlist, on_delete=models.CASCADE)
-    playlist_song_id = models.ForeignKey(Song, on_delete=models.CASCADE)
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    playlist_song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    playlist_song_order = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        unique_together = [
+            'playlist_song_order',
+        ]
+        ordering = [
+            'playlist_song_order',
+        ]

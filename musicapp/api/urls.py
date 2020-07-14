@@ -16,6 +16,24 @@ urlpatterns = [
                               namespace='rest_framework')),
     path('songlist/<uid>', views.song_list, name='songList'),
     path('addsong/<uid>', views.add_song, name='addSong'),
+    path('playlistsongs/',
+         views.PlaylistSongListView.as_view(),
+         name='playlistsonglist'),
+    path('playlistsongs/<pk>',
+         views.PlaylistSongList.as_view(),
+         name='playlistsong'),
+
+    # song rest
     path('deletesong/<uid>/<sid>', views.delete_song, name='deleteSong'),
     path('updatesong/<uid>/<sid>', views.update_song, name='updateSong'),
+
+    # playlist rest
+    path('getplaylist/<uid>/<pid>', views.get_playlist, name='getPlaylist'),
+    path('addplaylist/<uid>', views.create_playlist, name='addPlaylist'),
+    path('updateplaylist/<uid>/<pid>',
+         views.update_playlist,
+         name='updatePlaylist'),
+    path('deleteplaylist/<uid>/<pid>',
+         views.delete_playlist,
+         name='deletePlaylist'),
 ]

@@ -14,6 +14,175 @@
 
 {% block content %}
 
-<h1 class="text-black">This is Playlist</h1>
+<!-- Modal -->
+<div class="modal fade" id="plistAdd" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Playlist</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="toast" id='modalToast'>
+                    <div class="toast-header"></div>
+                    <div class="toast-body"></div>
+                </div>
+                <div class="fallback">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="plistTitle">Playlist Name</label>
+                            <input type="text" name="plistTitle" id="plistTitle" class="form-control"
+                                placeholder="Playlist_0" aria-describedby="helpId"
+                                value="Playlist_{{ user.playlist_set.count }}">
+                            <small id="helpId" class="text-muted">Write a name for your playlist</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="plistScope">Playlist Scope</label>
+                            <select class="form-control" name="plistScope" id="plistScope">
+                                <option>PUBLIC</option>
+                                <option>PRIVATE</option>
+                                <option>FOLLOWERS</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id='addplistmclose'>Close</button>
+                <button type="button" class="btn btn-primary" id="createPlaylist">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-{% endblock %}
+<!-- Content -->
+<div class="container-fluid px-0">
+    <div class="row my-0 my-sm-2 ">
+        <div class="col-md-6 col-sm-4 col-2 my-2 my-sm-0">
+            <button type="button" class="btn btn-primary float-left rounded-30" data-toggle="modal"
+                data-target="#plistAdd"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="col-md-6 col-sm-8 col-10 my-0 my-sm-0">
+            <form class="form-inline float-right">
+                <input class="form-control mr-sm-0 mr-0 col-10 col-sm-10 rounded-lg" type="text" placeholder="Search"
+                    id="plistSearch">
+                <button class="btn btn-outline-success my-2 col-2 col-sm-2 my-sm-0" type="submit"><i
+                        class="fas fa-search fa-sm"></i></button>
+            </form>
+        </div>
+    </div>
+    <hr class='display-4 bg-dark my-1'>
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="container-fluid col-lg-12 p-0">
+                <div class="container-fluid">
+                    <a name="selectplist" id="plistselector" class="btn btn-info p-0" href="#" role="button">
+                        <i class="fas fa-edit fa-lg fa-fw"></i>
+                    </a>
+                    <a name="copyplist" id="copytoplist" style="display: none;" class="btn btn-success p-0 plistoptions"
+                        href="#" role="button">
+                        <i class="fas fa-folder fa-lg fa-fw"></i>
+                    </a>
+                    <a name="deleteplist" id="deleteplist" style="display: none;"
+                        class="btn btn-danger p-0 plistoptions" href="#" role="button">
+                        <i class="fas fa-trash fa-lg fa-fw" aria-hidden="true"></i>
+                    </a>
+                    <a name="backplist" id="backplist" style="display: none;" class="btn btn-danger p-0 songlistoptions"
+                        href="#" role="button">
+                        <i class="fas fa-arrow-alt-circle-left fa-lg fa-fw" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="container-fluid">
+                    <div class="slidebase">
+                        <table class="table demo table-fixed table-hover table-responsive-lg mx-0">
+                            <thead class="thead-dark">
+                                <tr scope="row display-2">
+                                    <th scope="col" class='col-lg-1 col-2 col-sm-1' data-hint='plistidHead'>#</th>
+                                    <th scope="col" class='col-lg-1 col-2 col-sm-1 d-none' data-hint='selector'><i
+                                            class="fas fa-square fa-lg"></i></th>
+                                    <th scope="col" class='col-lg-8 col-8 col-sm-8' data-hint='plistTitleHead'>Title
+                                    </th>
+                                    <th scope="col" class='col-lg-2 col-2 col-sm-2 d-none d-sm-block px-0'
+                                        data-hint='plistUserHead'>User</th>
+                                    <th scope="col" class="col-lg-1 col-2 col-sm-1" data-hint='plistScopeHead'>Access
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbcontent">
+                                {% for plist in user.playlist_set.all %}
+                                <tr scope="row" class="playlistrow" data-id={{ plist.id }} data-is='unchecked'>
+                                    <td class="col-lg-1 col-2 col-sm-1" data-hint='plistid'>{{plist.id}}</td>
+                                    <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
+                                            class="far fa-square fa-lg"></i></td>
+                                    <td class="col-lg-8 col-8 col-sm-8" data-hint='plistTitle'>{{plist.playlist_title}}
+                                    </td>
+                                    <td class="col-lg-2 col-2 col-sm-2 d-none d-sm-block" data-hint='plistUser'>
+                                        {{plist.playlist_user}}</td>
+                                    <td class='col-lg-1 col-2 col-sm-1 text-center' data-hint='plistScope'>
+                                        {{plist.playlist_scope}}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% block script_js %}
+<script>
+    localStorage.setItem('uid', '{{ user.id }}')
+    $('#createPlaylist').on('click', function () {
+        let plistname = $('#plistTitle').val();
+        let plistscope = $('#plistScope').val();
+        let kw = $('#plistSearch').val() || '';
+        let csrf = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            type: "POST",
+            url: "/api/addplaylist/" + localStorage.getItem('uid'),
+            data: {
+                csrfmiddlewaretoken: csrf,
+                plistTitle: plistname,
+                plistScope: plistscope,
+                kw: kw,
+            },
+            dataType: "json",
+            success: function (result, status) {
+                if (status) {
+                    if (result.Already == '!EXIST') {
+                        let template = `
+                            <tr scope="row" data-id=${result.plistid} data-is='unchecked'>
+                                <td class="col-lg-1 col-2 col-sm-1" data-hint='plistid'>${result.plistid}</td>
+                                <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
+                                        class="far fa-square fa-lg"></i></td>
+                                <td class="col-lg-8 col-8 col-sm-8" data-hint='plistTitle'>${result.plistTitle}</td>
+                                <td class="col-lg-2 col-2 col-sm-2 d-none d-sm-block" data-hint='plistUser'>
+                                    ${result.plistUser}</td>
+                                <td class='col-lg-1 col-2 col-sm-1 text-center' data-hint='plistScope'>
+                                    ${result.plistScope}
+                                </td>
+                            </tr>
+                        `;
+                        $('#tbcontent').append(template);
+                        $('#addplistmclose').click();
+                    } else {
+                        $('#modalToast>.toast-header').html('<a href="#" class="btn btn-info">Oopsi!</a>');
+                        $('#modalToast>.toast-body').html('<strong>Playlist already exist</strong>')
+                        $('#modalToast').toast({
+                            animation: true,
+                            delay: 3000,
+                        });
+                        $('#modalToast').toast('show');
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock script_js %}
+{% endblock content %}

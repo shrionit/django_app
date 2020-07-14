@@ -7,13 +7,14 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from .serializers import UserSerializer, GroupSerializer, SongSerializer, PlaylistSerializer
+from rest_framework import generics
+from .serializers import *
 from music.models import *
 from tinytag import TinyTag
 from PIL import Image
 import os
 from django.core.files.base import ContentFile
-import io
+import io, ast
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -46,6 +47,23 @@ class PlaylistViewSet(viewsets.ModelViewSet):
     API endpoint that allows playlist to be viewed or edited
     """
     queryset = Playlist.objects.all()
+    serializer_class = PlaylistSerializer
+
+
+class PlaylistSongList(generics.ListCreateAPIView):
+    # queryset = Playlist.objects.all()
+    def get_queryset(self):
+        queryset = Playlist.objects.filter(
+            id=self.kwargs["pk"])[0].playlist_song_set.all()
+        return queryset
+
+    serializer_class = PlaylistSongSerializer
+
+
+class PlaylistSongListView(generics.ListCreateAPIView):
+    def get_queryset(self):
+        return Playlist.objects.all()
+
     serializer_class = PlaylistSerializer
 
 
@@ -87,31 +105,39 @@ def update_song(request, uid, sid):
 @csrf_exempt
 @api_view(['POST'])
 def add_song(request, uid):
-    print('FILES: ', request.FILES)
     try:
         usr = User.objects.get(id=uid)
     except User.DoesNotExist:
         return HttpResponse(status=404)
     if usr.is_authenticated:
         songfile = request.FILES['songfile']
-        newsong = Song(song_title=songfile.name[:-4],
-                       song_scope='PUBLIC',
-                       song_added_by=usr)
-        newsong.song_file.save(songfile.name, songfile, save=True)
-        tag = TinyTag.get(newsong.song_file.url[1:], image=True)
-        newsong.song_artist = tag.artist or 'Unknown'
-        newsong.song_duration = convert(tag.duration)
-        newsong.song_released_on = tag.year
-        newsong.save()
-        cover = tag.get_image()
-        if cover:
-            newsong.song_cover.save(songfile.name[:-4] + '_cover.jpg',
-                                    ContentFile(io.BytesIO(cover).getvalue()),
-                                    save=True)
+        if not Song.objects.filter(song_title=songfile.name[:-4]).exists():
+            newsong = Song.objects.get_or_create(id=Song.objects.count(),
+                                                 song_title=songfile.name[:-4],
+                                                 song_scope='PUBLIC',
+                                                 song_added_by=usr)[0]
+            newsong.song_file.save(songfile.name, songfile, save=True)
+            tag = TinyTag.get(newsong.song_file.url[1:], image=True)
+            newsong.song_artist = tag.artist or 'Unknown'
+            newsong.song_duration = convert(tag.duration)
+            newsong.song_released_on = tag.year
+            newsong.save()
+            cover = tag.get_image()
+            if cover:
+                newsong.song_cover.save(songfile.name[:-4] + '_cover.jpg',
+                                        ContentFile(
+                                            io.BytesIO(cover).getvalue()),
+                                        save=True)
+            else:
+                with open('media/img/default-cover.jpg', 'rb') as f:
+                    newsong.song_cover.save('default-cover.jpg', f, save=True)
         else:
-            with open('media/img/default-cover.jpg', 'rb') as f:
-                newsong.song_cover.save('default-cover.jpg', f, save=True)
+            return Response({
+                'Already': 'EXIST',
+                'Error': 'Song Already Exist',
+            })
     data = {
+        'Already': '!EXIST',
         'chunkIndex': 0,  # the chunk index processed
         'initialPreview': '',  #the thumbnail preview data (e.g. image)
         'initialPreviewConfig': {
@@ -121,6 +147,16 @@ def add_song(request, uid):
             'fileId': request.data['fileId'],  # file identifier
             'size': request.FILES['songfile'].size,  # file size
             'zoomData': '',  # separate larger zoom data
+        },
+        'songinfo': {
+            'songid': newsong.id,
+            'songTitle': newsong.song_title,
+            'songUser': usr.username,
+            'songArtist': newsong.song_artist,
+            'songDuration': newsong.song_duration,
+            'songScope': newsong.song_scope,
+            'songUrl': newsong.song_file.url,
+            'songCoverUrl': newsong.song_cover.url,
         }
     }
     return Response(data=data)
@@ -156,25 +192,125 @@ def delete_song(request, uid, sid):
 @csrf_exempt
 @api_view(['GET'])
 def get_playlist(request, uid, pid=None):
-    pass
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        kw = request.data['kw'] or ''
 
 
 @csrf_exempt
 @api_view(['POST'])
 def create_playlist(request, uid):
-    pass
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        plisttitle = request.data['plistTitle']
+        plistuser = usr
+        plistscope = request.data['plistScope']
+        count = Playlist.objects.count()
+        playlist = None
+        if count == 0:
+            playlist = Playlist.objects.get_or_create(
+                playlist_title=plisttitle,
+                playlist_user=plistuser,
+                playlist_scope=plistscope)
+            return Response({
+                'Already': '!EXIST',
+                'Success': 'Playlist created.',
+                'plistid': playlist.id,
+                'plistTitle': playlist.playlist_title,
+                'plistUser': usr.username,
+                'plistScope': playlist.playlist_scope
+            })
+            playlist.save()
+        else:
+            if not Playlist.objects.filter(playlist_title=plisttitle).exists():
+                playlist = Playlist.objects.get_or_create(
+                    playlist_title=plisttitle,
+                    playlist_user=plistuser,
+                    playlist_scope=plistscope)[0]
+                playlist.save()
+                return Response({
+                    'Already': '!EXIST',
+                    'Success': 'Playlist created.',
+                    'plistid': playlist.id,
+                    'plistTitle': playlist.playlist_title,
+                    'plistUser': usr.username,
+                    'plistScope': playlist.playlist_scope
+                })
+            else:
+                return Response({
+                    'Already': 'EXIST',
+                })
+    return HttpResponse(status=404)
 
 
 @csrf_exempt
 @api_view(['PUT'])
 def update_playlist(request, uid, pid):
-    pass
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        if request.data['changename'] == True:
+            newname = request.data['newname']
+            if User.objects.get(id=uid).playlist_set.filter(id=pid).exists():
+                plist = Playlist.objects.get(id=pid)
+                plist.playlist_title = newname
+                plist.save()
+                return Response({
+                    'Success': 'Playlist name changed',
+                    'oldName': oldname,
+                    'newName': newname,
+                })
+            else:
+                return HttpResponse(status=404)
+
+        plistid = request.data['plistId']
+        playlist = Playlist.objects.get(id=pid)
+        aobject = ast.literal_eval(request.data['songIds'])
+        plistsongids = list(aobject) if type(aobject) is not int else [aobject]
+        created = []
+        data = {
+            'Success': 'Songs added to playlist',
+            'playlistname': playlist.playlist_title,
+            'songsadded': [],
+            'msg': []
+        }
+        for id in plistsongids:
+            song = Song.objects.get(id=id)
+            if not Playlist_Song.objects.filter(playlist=playlist,
+                                                playlist_song=song).exists():
+                plist = Playlist_Song.objects.get_or_create(
+                    playlist=playlist, playlist_song=song)[0]
+                data['songsadded'].append(id)
+                created.append(plist)
+            else:
+                data['msg'].append(
+                    f'{Song.objects.get(id=id).song_title} already exist in {Playlist.objects.get(id=pid).playlist_title}'
+                )
+        return Response(data)
 
 
 @csrf_exempt
 @api_view(['DELETE'])
 def delete_playlist(request, uid):
-    pass
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        aobject = ast.literal_eval(request.data['plistIds'])
+        plistids = list(aobject) if type(aobject) is not int else [aobject]
+        for ids in plistids:
+            Playlist.objects.get(id=ids).delete()
+        return Response({'Success': 'Deleted'})
+    return HttpResponse(status=404)
 
 
 # helper functions

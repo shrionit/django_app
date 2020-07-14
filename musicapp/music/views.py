@@ -91,3 +91,12 @@ def songs_view(request):
 @login_required(login_url='/music/')
 def playlist_view(request):
     return render(request, 'music/playlist.html', {'pg_active': True})
+
+
+@login_required(login_url='/music/')
+def playlistsong_view(request, pid):
+    playlist = Playlist.objects.get(id=pid).playlist_song_set.all()
+    return render(request, 'music/playlist.html', {
+        'pg_active': True,
+        'playlist': playlist,
+    })
