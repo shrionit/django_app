@@ -177,8 +177,10 @@ def delete_song(request, uid, sid):
             return Response(data={'Error': 'File didn\'t existed'}, status=404)
         song_file = song.song_file
         deleted = song.delete()
+        data['deletedsongid'] = sid
         if deleted:
             if os.path.exists(song_file.url[1:]):
+                os.remove(song.song_cover.url[1:])
                 os.remove(song_file.url[1:])
                 data['info'] = 'File existed'
             else:
@@ -299,17 +301,42 @@ def update_playlist(request, uid, pid):
 
 @csrf_exempt
 @api_view(['DELETE'])
-def delete_playlist(request, uid):
+def delete_playlist(request, uid, pid):
     try:
         usr = User.objects.get(id=uid)
     except User.DoesNotExist:
         return HttpResponse(status=404)
     if usr.is_authenticated:
-        aobject = ast.literal_eval(request.data['plistIds'])
-        plistids = list(aobject) if type(aobject) is not int else [aobject]
-        for ids in plistids:
-            Playlist.objects.get(id=ids).delete()
-        return Response({'Success': 'Deleted'})
+        deleted = Playlist.objects.get(id=pid).delete()
+        if deleted:
+            return Response({
+                'Success': 'Deleted',
+                'deletedplaylistid': pid,
+            })
+        else:
+            return HttpResponse(status=404)
+    return HttpResponse(status=404)
+
+
+@csrf_exempt
+@api_view(['DELETE'])
+def delete_playlistsong(request, uid, pid, sid):
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        song = Song.objects.get(id=sid)
+        deleted = Playlist.objects.get(id=pid).playlist_song_set.get(
+            playlist_song=song).delete()
+        if deleted:
+            return Response({
+                'Success': 'Deleted',
+                'playlistid': pid,
+                'deletedplaylistsongid': sid,
+            })
+        else:
+            return HttpResponse(status=404)
     return HttpResponse(status=404)
 
 

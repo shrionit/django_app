@@ -255,12 +255,26 @@ $(document).ready(function () {
       $(this).attr("data-target", "");
     }
   });
+
+  $("#deletesong").on("click", function () {
+    if (window.selectcount > 0) {
+      $("#deletemsgbox").html(
+        window.selectcount + " songs selected. Are you sure ?"
+      );
+      $(this).attr("data-target", "#deletesongmodal");
+      window.selectedsonglist = [];
+      $("tr[data-is=checked]").each(function () {
+        window.selectedsonglist.push(parseInt($(this).attr("data-id")));
+      });
+    } else {
+      $(this).attr("data-target", "");
+    }
+  });
   $("#submitsongtoplaylist").on("click", function () {
     let playlistid = $("select[name=plist]").val();
     let csrf = $("input[name=csrfmiddlewaretoken]").val();
     let Url =
       "/api/updateplaylist/" + localStorage.getItem("uid") + "/" + playlistid;
-    console.log(Url);
     $.ajax({
       type: "PUT",
       url: Url,
@@ -312,5 +326,110 @@ $(document).ready(function () {
         }
       },
     });
+  });
+  $("#confirmSongDelete").on("click", function () {
+    let csrf = $("input[name=csrfmiddlewaretoken]").val();
+    for (songid of window.selectedsonglist) {
+      let Url = "/api/deletesong/" + localStorage.getItem("uid") + "/" + songid;
+      $.ajax({
+        type: "DELETE",
+        url: Url,
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrf);
+          }
+        },
+        data: {
+          csrfmiddlewaretoken: csrf,
+        },
+        dataType: "json",
+        success: function (response) {
+          $("tr[data-id=" + response.deletedsongid + "]").remove();
+        },
+      });
+    }
+    $(".close").click();
+  });
+  $("#confirmPlistSongDelete").on("click", function () {
+    let csrf = $("input[name=csrfmiddlewaretoken]").val();
+    for (sid of window.selectedplaylistsongs) {
+      let Url =
+        "/api/deleteplaylistsong/" +
+        localStorage.getItem("uid") +
+        "/" +
+        localStorage.getItem("pid") +
+        "/" +
+        sid;
+      $.ajax({
+        type: "DELETE",
+        url: Url,
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrf);
+          }
+        },
+        data: {
+          csrfmiddlewaretoken: csrf,
+        },
+        dataType: "json",
+        success: function (response) {
+          $("tr[data-id=" + response.deletedplaylistsongid + "]").remove();
+        },
+      });
+    }
+  });
+
+  $("#confirmPlistDelete").on("click", function () {
+    let csrf = $("input[name=csrfmiddlewaretoken]").val();
+    for (pid of window.selectedplaylist) {
+      let Url =
+        "/api/deleteplaylist/" + localStorage.getItem("uid") + "/" + pid;
+      $.ajax({
+        type: "DELETE",
+        url: Url,
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrf);
+          }
+        },
+        data: {
+          csrfmiddlewaretoken: csrf,
+        },
+        dataType: "json",
+        success: function (response) {
+          $("tr[data-id=" + response.deletedplaylistid + "]").remove();
+        },
+      });
+    }
+  });
+
+  $("#deleteplist").on("click", function () {
+    if (window.selectcount > 0) {
+      $("#deletemsgbox").html(
+        window.selectcount + " playlist selected. Are you sure ?"
+      );
+      $(this).attr("data-target", "#deleteplistmodal");
+      window.selectedplaylist = [];
+      $("tr[data-is=checked]").each(function () {
+        window.selectedplaylist.push(parseInt($(this).attr("data-id")));
+      });
+    } else {
+      $(this).attr("data-target", "");
+    }
+  });
+
+  $("#deleteplistsongs").on("click", function () {
+    if (window.selectcount > 0) {
+      $("#deletepsongmsgbox").html(
+        window.selectcount + " songs selected. Are you sure ?"
+      );
+      $(this).attr("data-target", "#deleteplistsongmodal");
+      window.selectedplaylistsongs = [];
+      $("tr[data-is=checked]").each(function () {
+        window.selectedplaylistsongs.push(parseInt($(this).attr("data-id")));
+      });
+    } else {
+      $(this).attr("data-target", "");
+    }
   });
 });

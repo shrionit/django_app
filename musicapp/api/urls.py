@@ -36,4 +36,7 @@ urlpatterns = [
     path('deleteplaylist/<uid>/<pid>',
          views.delete_playlist,
          name='deletePlaylist'),
+    path('deleteplaylistsong/<uid>/<pid>/<sid>',
+         views.delete_playlistsong,
+         name='deletePlaylistSong'),
 ]

@@ -90,13 +90,22 @@ def songs_view(request):
 
 @login_required(login_url='/music/')
 def playlist_view(request):
-    return render(request, 'music/playlist.html', {'pg_active': True})
+    return render(request, 'music/playlist.html', {
+        'pg_active': True,
+        'playlistview': False,
+    })
 
 
 @login_required(login_url='/music/')
 def playlistsong_view(request, pid):
-    playlist = Playlist.objects.get(id=pid).playlist_song_set.all()
-    return render(request, 'music/playlist.html', {
-        'pg_active': True,
-        'playlist': playlist,
-    })
+    plist = Playlist.objects.get(id=pid).playlist_song_set.all()
+    playlist = []
+    for ls in plist:
+        playlist.append(ls.playlist_song)
+    return render(
+        request, 'music/playlist.html', {
+            'pg_active': True,
+            'playlistview': True,
+            'playlistid': pid,
+            'playlistsongs': playlist,
+        })

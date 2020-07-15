@@ -58,12 +58,64 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteplistmodal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid" id='deletemsgbox'>
+                    Are you sure ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmPlistDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteplistsongmodal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid" id='deletepsongmsgbox'>
+                    Are you sure ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmPlistSongDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Content -->
 <div class="container-fluid px-0">
     <div class="row my-0 my-sm-2 ">
         <div class="col-md-6 col-sm-4 col-2 my-2 my-sm-0">
-            <button type="button" class="btn btn-primary float-left rounded-30" data-toggle="modal"
-                data-target="#plistAdd"><i class="fas fa-plus"></i></button>
+            <button type="button" class="btn btn-white float-left rounded-30" data-toggle="modal"
+                data-target="#plistAdd"><i class="fas fa-plus" data-toggle='tooltip' data-title='Create Playlist'
+                    data-placement='right'></i></button>
+            {% if playlistview %}
+            <button type="button" class="btn btn-white float-left rounded-30" data-toggle='tooltip'
+                data-title='Go Back To Playlist' data-placement='right' id="backtoplist"><i
+                    class="fas fa-arrow-alt-circle-left fa-lg fa-fw"></i></i></button>
+            {% endif %}
         </div>
         <div class="col-md-6 col-sm-8 col-10 my-0 my-sm-0">
             <form class="form-inline float-right">
@@ -79,55 +131,89 @@
         <div class="row">
             <div class="container-fluid col-lg-12 p-0">
                 <div class="container-fluid">
-                    <a name="selectplist" id="plistselector" class="btn btn-info p-0" href="#" role="button">
+                    <a name="selectplist" id="{% if playlistview %}songselector{% else %}plistselector{% endif %}"
+                        class="btn btn-info p-0" href="#" role="button" data-toggle='tooltip' data-title='Select'
+                        data-placement='top'>
                         <i class="fas fa-edit fa-lg fa-fw"></i>
                     </a>
-                    <a name="copyplist" id="copytoplist" style="display: none;" class="btn btn-success p-0 plistoptions"
-                        href="#" role="button">
-                        <i class="fas fa-folder fa-lg fa-fw"></i>
-                    </a>
-                    <a name="deleteplist" id="deleteplist" style="display: none;"
-                        class="btn btn-danger p-0 plistoptions" href="#" role="button">
-                        <i class="fas fa-trash fa-lg fa-fw" aria-hidden="true"></i>
-                    </a>
-                    <a name="backplist" id="backplist" style="display: none;" class="btn btn-danger p-0 songlistoptions"
-                        href="#" role="button">
-                        <i class="fas fa-arrow-alt-circle-left fa-lg fa-fw" aria-hidden="true"></i>
+                    <a name="deleteplist" id="{% if playlistview %}deleteplistsongs{% else %}deleteplist{% endif %}"
+                        style="display: none;"
+                        class="btn btn-danger p-0 {% if playlistview %}songoptions{% else %}plistoptions{% endif %}"
+                        href="#" role="button" data-toggle="modal" data-target="#deleteplistsongmodal">
+                        <i class="fas fa-trash fa-lg fa-fw" aria-hidden="true" data-toggle='tooltip'
+                            data-title='Delete selected playlist' data-placement='top'></i>
                     </a>
                 </div>
                 <div class="container-fluid">
                     <div class="slidebase">
-                        <table class="table demo table-fixed table-hover table-responsive-lg mx-0">
-                            <thead class="thead-dark">
-                                <tr scope="row display-2">
-                                    <th scope="col" class='col-lg-1 col-2 col-sm-1' data-hint='plistidHead'>#</th>
-                                    <th scope="col" class='col-lg-1 col-2 col-sm-1 d-none' data-hint='selector'><i
-                                            class="fas fa-square fa-lg"></i></th>
-                                    <th scope="col" class='col-lg-8 col-8 col-sm-8' data-hint='plistTitleHead'>Title
-                                    </th>
-                                    <th scope="col" class='col-lg-2 col-2 col-sm-2 d-none d-sm-block px-0'
-                                        data-hint='plistUserHead'>User</th>
-                                    <th scope="col" class="col-lg-1 col-2 col-sm-1" data-hint='plistScopeHead'>Access
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbcontent">
-                                {% for plist in user.playlist_set.all %}
-                                <tr scope="row" class="playlistrow" data-id={{ plist.id }} data-is='unchecked'>
-                                    <td class="col-lg-1 col-2 col-sm-1" data-hint='plistid'>{{plist.id}}</td>
-                                    <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
-                                            class="far fa-square fa-lg"></i></td>
-                                    <td class="col-lg-8 col-8 col-sm-8" data-hint='plistTitle'>{{plist.playlist_title}}
-                                    </td>
-                                    <td class="col-lg-2 col-2 col-sm-2 d-none d-sm-block" data-hint='plistUser'>
-                                        {{plist.playlist_user}}</td>
-                                    <td class='col-lg-1 col-2 col-sm-1 text-center' data-hint='plistScope'>
-                                        {{plist.playlist_scope}}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class="slidebase">
+                            {% if playlistview %}
+                            <table class="table demo table-fixed table-hover table-responsive-lg mx-0">
+                                <thead class="thead-dark">
+                                    <tr scope="row display-2">
+                                        <th scope="col" class='col-lg-1 col-2 col-sm-1' data-hint='songidHead'>#</th>
+                                        <th scope="col" class='col-lg-1 col-2 col-sm-1 d-none' data-hint='selector'><i
+                                                class="fas fa-square fa-lg"></i></th>
+                                        <th scope="col" class='col-lg-8 col-8 col-sm-8' data-hint='titleHead'>Title</th>
+                                        <th scope="col" class='col-lg-2 col-2 col-sm-2 d-none d-sm-block px-0'
+                                            data-hint='durationHead'>Duration
+                                        </th>
+                                        <th scope="col" class="col-lg-1 col-2 col-sm-1" data-hint='favoriteHead'>
+                                            Favorite</th>
+                                    </tr>
+                                </thead>
+                                <tbody id='songcontent'>
+                                    {% for song in playlistsongs %}
+                                    <tr scope="row" data-id={{ song.id }} data-is='unchecked'>
+                                        <td class="col-lg-1 col-2 col-sm-1" data-hint='songid'>{{song.id}}</td>
+                                        <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
+                                                class="far fa-square fa-lg"></i></td>
+                                        <td class="col-lg-8 col-8 col-sm-8" data-hint='title'>{{song.song_title}}</td>
+                                        <td class="col-lg-2 col-2 col-sm-2 d-none d-sm-block" data-hint='duration'>
+                                            {{song.song_duration}}</td>
+                                        <td class='col-lg-1 col-2 col-sm-1 text-center' data-hint='favorite'><i
+                                                class="fa{% if song.is_fav %}s{% else %}r{% endif %} fa-heart fa-lg text-danger"></i>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <table class="table demo table-fixed table-hover table-responsive-lg mx-0">
+                                <thead class="thead-dark">
+                                    <tr scope="row display-2">
+                                        <th scope="col" class='col-lg-1 col-2 col-sm-1' data-hint='plistidHead'>#</th>
+                                        <th scope="col" class='col-lg-1 col-2 col-sm-1 d-none' data-hint='selector'><i
+                                                class="fas fa-square fa-lg"></i></th>
+                                        <th scope="col" class='col-lg-8 col-8 col-sm-8' data-hint='plistTitleHead'>Title
+                                        </th>
+                                        <th scope="col" class='col-lg-2 col-2 col-sm-2 d-none d-sm-block px-0'
+                                            data-hint='plistUserHead'>User</th>
+                                        <th scope="col" class="col-lg-1 col-2 col-sm-1" data-hint='plistScopeHead'>
+                                            Access
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbcontent">
+                                    {% for plist in user.playlist_set.all %}
+                                    <tr scope="row" class="playlistrow" data-id={{ plist.id }} data-is='unchecked'>
+                                        <td class="col-lg-1 col-2 col-sm-1" data-hint='plistid'>{{plist.id}}</td>
+                                        <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
+                                                class="far fa-square fa-lg"></i></td>
+                                        <td class="col-lg-8 col-8 col-sm-8" data-hint='plistTitle'>
+                                            {{plist.playlist_title}}
+                                        </td>
+                                        <td class="col-lg-2 col-2 col-sm-2 d-none d-sm-block" data-hint='plistUser'>
+                                            {{plist.playlist_user}}</td>
+                                        <td class='col-lg-1 col-2 col-sm-1 text-center' data-hint='plistScope'>
+                                            {{plist.playlist_scope}}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,6 +223,9 @@
 {% block script_js %}
 <script>
     localStorage.setItem('uid', '{{ user.id }}')
+    {% if playlistview %}
+    localStorage.setItem('pid', '{{ playlistid }}')
+    {% endif %}
     $('#createPlaylist').on('click', function () {
         let plistname = $('#plistTitle').val();
         let plistscope = $('#plistScope').val();
@@ -156,7 +245,7 @@
                 if (status) {
                     if (result.Already == '!EXIST') {
                         let template = `
-                            <tr scope="row" data-id=${result.plistid} data-is='unchecked'>
+                            <tr scope="row" data-id=${result.plistid} data-is='unchecked' class='playlistrow'>
                                 <td class="col-lg-1 col-2 col-sm-1" data-hint='plistid'>${result.plistid}</td>
                                 <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
                                         class="far fa-square fa-lg"></i></td>
@@ -182,6 +271,14 @@
                 }
             }
         });
+    });
+
+    $('.playlistrow').on('dblclick', function () {
+        let pid = parseInt($(this).attr('data-id'));
+        window.location.replace('/music/playlists/' + pid);
+    });
+    $('#backtoplist').on('click', function () {
+        window.location.replace('/music/playlists');
     });
 </script>
 {% endblock script_js %}

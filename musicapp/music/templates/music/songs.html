@@ -81,12 +81,38 @@
     </div>
 </div>
 
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="deletesongmodal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid" id='deletemsgbox'>
+                    Are you sure ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmSongDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- End Modals -->
+
+
 <div class="container-fluid px-0">
     <div class="row my-0 my-sm-2 ">
         <div class="col-md-6 col-sm-4 col-2 my-2 my-sm-0">
             <button type="button" class="btn btn-primary float-left rounded-30" data-toggle="modal"
-                data-target="#dndadd"><i class="fas fa-plus"></i></button>
+                data-target="#dndadd"><i class="fas fa-plus" data-toggle='tooltip' data-title='Add Songs'
+                    data-placement='right'></i></button>
         </div>
         <div class="col-md-6 col-sm-8 col-10 my-0 my-sm-0">
             <form class="form-inline float-right">
@@ -102,15 +128,18 @@
             <div class="container-fluid col-lg-12 p-0">
                 <div class="container-fluid">
                     <a name="selectsong" id="songselector" class="btn btn-info p-0" href="#" role="button">
-                        <i class="fas fa-edit fa-lg fa-fw"></i>
+                        <i class="fas fa-edit fa-lg fa-fw" data-toggle='tooltip' data-title='Select'
+                            data-placement='top'></i>
                     </a>
                     <a name="addplist" id="songtoplist" style="display: none;" class="btn btn-success p-0 songoptions"
                         href="#" role="button" data-toggle="modal" data-target="#toplistmodal">
-                        <i class="fas fa-folder fa-lg fa-fw"></i>
+                        <i class="fas fa-folder fa-lg fa-fw" data-toggle='tooltip' data-title='Add To Playlist'
+                            data-placement='top'></i>
                     </a>
                     <a name="deletesong" id="deletesong" style="display: none;" class="btn btn-danger p-0 songoptions"
-                        href="#" role="button">
-                        <i class="fas fa-trash fa-lg fa-fw" aria-hidden="true"></i>
+                        href="#" role="button" data-toggle="modal" data-target="#deletesongmodal">
+                        <i class="fas fa-trash fa-lg fa-fw" aria-hidden="true" data-toggle='tooltip'
+                            data-title='Delete Songs' data-placement='top'></i>
                     </a>
                 </div>
                 <div class="container-fluid">
