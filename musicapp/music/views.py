@@ -77,8 +77,19 @@ def logout_view(request):
 def home_view(request):
     usr = request.user
     is_logged_in = usr.is_authenticated
-    print(f'from home_view logged_in = {is_logged_in}')
-    return render(request, 'music/home.html', {'pg_active': True})
+    otheruserplaylist = []
+    followingplaylist = []
+    for u in User.objects.filter(is_superuser=False).exclude(id=usr.id):
+        for pl in u.playlist_set.filter(playlist_scope='PUBLIC'):
+            otheruserplaylist.append(pl)
+        for pl in u.playlist_set.filter(playlist_scope='FOLLOWERS'):
+            followingplaylist.append(pl)
+    return render(
+        request, 'music/home.html', {
+            'pg_active': True,
+            'otheruserplaylist': otheruserplaylist,
+            'followingplaylist': followingplaylist,
+        })
 
 
 @login_required(login_url='/music/')

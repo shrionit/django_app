@@ -340,6 +340,57 @@ def delete_playlistsong(request, uid, pid, sid):
     return HttpResponse(status=404)
 
 
+@api_view(['POST'])
+def follow_user(request, uid):
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        who = request.data['who']
+        who = User.objects.get(id=who)
+        if not Follow.objects.filter(follower=usr, following=who).exists():
+            follower = Follow.objects.get_or_create(follower=usr,
+                                                    following=who)
+            follower.save()
+            return Response({
+                'Already': '!FOLLOW',
+                'followerid': follower.follower,
+                'following': follower.following,
+            })
+        else:
+            return Response({
+                'Already': 'FOLLOW',
+            })
+    else:
+        return HttpResponse(status=404)
+
+
+@api_view(['DELETE'])
+def unfollow_user(request, uid):
+    try:
+        usr = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return HttpResponse(status=404)
+    if usr.is_authenticated:
+        who = request.data['who']
+        who = User.objects.get(id=who)
+        if not Follow.objects.filter(follower=usr, following=who).exists():
+            unfollowed = Follow.objects.get(follower=usr,
+                                            following=who).delete()
+            return Response({
+                'Already': 'FOLLOW',
+                'followerid': follower.follower,
+                'unfollowedid': who
+            })
+        else:
+            return Response({
+                'Already': '!FOLLOW',
+            })
+    else:
+        return HttpResponse(status=404)
+
+
 # helper functions
 def convert(seconds):
     hours = seconds // 3600

@@ -40,3 +40,14 @@ class Playlist_Song(models.Model):
         ordering = [
             'playlist_song_order',
         ]
+
+
+class Follow:
+    following = models.ForeignKey(User, on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [
+            'follower',
+            'following',
+        ]

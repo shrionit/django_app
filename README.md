@@ -18,6 +18,16 @@ Go to base ('musicapp/') and run
 python manage.py runserver
 ```
 
+## Users
+
+TWO_USERS
+
+```cmd
+admin: root@root
+user0: user_0@Abcd_987654
+user1: user_1@Abcd_987654
+```
+
 ## [DRF] View
 
 Use curl or open a webbrowser

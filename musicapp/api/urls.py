@@ -39,4 +39,6 @@ urlpatterns = [
     path('deleteplaylistsong/<uid>/<pid>/<sid>',
          views.delete_playlistsong,
          name='deletePlaylistSong'),
+    path('follow/<uid>', views.follow_user, name='followUser'),
+    path('unfollow/<uid>', views.unfollow_user, name='unfollowUser'),
 ]
