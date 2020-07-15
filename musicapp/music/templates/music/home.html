@@ -12,6 +12,41 @@
 {% endblock current_username %}Ram
 {% block content %}
 
-<h1 class="text-black">This is home</h1>
+<div class="container-fluid px-0 bg-dark">
+    <div id="demo" class="carousel slide {% if user.song_set.count == 0 %}d-none{% endif %}" style="height:500px;"
+        data-ride="carousel">
+
+        <!-- Indicators -->
+        <ul class="carousel-indicators">
+            {% for song in user.song_set.all %}
+            <li data-target="#demo" data-slide-to="{{song.id}}" class="{% if song.id == 0 %}active{% endif %}"></li>
+            {% endfor %}
+
+        </ul>
+
+        <!-- The slideshow -->
+        <div class="carousel-inner">
+            {% for song in user.song_set.all %}
+            <div class="carousel-item {% if song.id == 0 %}active{% endif %} text-center">
+                <img class="img" src={{ song.song_cover.url }} alt="Card image" style='height:400px;'>
+                <div class="carousel-caption">
+                    <h6>{{song.song_title|upper}}</h6>
+                    <p>Artist: {{song.song_artist}}</p>
+                    <p>User: {{song.song_added_by}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Left and right controls -->
+        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#demo" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </a>
+
+    </div>
+</div>
 
 {% endblock %}

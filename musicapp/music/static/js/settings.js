@@ -377,6 +377,7 @@ $(document).ready(function () {
         },
       });
     }
+    $(".close").click();
   });
 
   $("#confirmPlistDelete").on("click", function () {
@@ -401,6 +402,7 @@ $(document).ready(function () {
         },
       });
     }
+    $(".close").click();
   });
 
   $("#deleteplist").on("click", function () {
