@@ -2,9 +2,16 @@
 
 A music app
 
-# API VIEWS
+## Installation
 
-_users_: /api/users
-_groups_: /api/groups
-_songs_: /api/songs
-_playlist_: /api/playlist
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+
+```cmd
+pip install -r requirements.txt
+```
+
+## Usage
+
+```cmd
+python manage.py runserver
+```
