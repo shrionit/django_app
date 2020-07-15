@@ -79,16 +79,29 @@ def home_view(request):
     is_logged_in = usr.is_authenticated
     otheruserplaylist = []
     followingplaylist = []
+    followings = Follow.objects.filter(follower=usr)
+    followers = Follow.objects.filter(user=usr)
+    myfollowings = []
+    myfollowers = []
+    for f in followings:
+        myfollowings.append(f.user)
+    for f in followers:
+        myfollowers.append(f.user)
+
     for u in User.objects.filter(is_superuser=False).exclude(id=usr.id):
         for pl in u.playlist_set.filter(playlist_scope='PUBLIC'):
             otheruserplaylist.append(pl)
-        for pl in u.playlist_set.filter(playlist_scope='FOLLOWERS'):
-            followingplaylist.append(pl)
+    for u in myfollowings:
+        for p in u.playlist_set.filter(playlist_scope='FOLLOWERS'):
+            followingplaylist.append(p)
+
     return render(
         request, 'music/home.html', {
             'pg_active': True,
             'otheruserplaylist': otheruserplaylist,
             'followingplaylist': followingplaylist,
+            'myfollowers': myfollowers,
+            'myfollowings': myfollowings,
         })
 
 
@@ -101,9 +114,16 @@ def songs_view(request):
 
 @login_required(login_url='/music/')
 def playlist_view(request):
+    follow = Follow.objects.filter(follower=request.user)
+    playlistdata = []
+    for u in [fl.user for fl in follow]:
+        for pl in u.playlist_set.filter(playlist_scope='FOLLOWERS'):
+            playlistdata.append(pl)
+    print(playlistdata)
     return render(request, 'music/playlist.html', {
         'pg_active': True,
         'playlistview': False,
+        'playlistdata': playlistdata,
     })
 
 

@@ -42,12 +42,8 @@ class Playlist_Song(models.Model):
         ]
 
 
-class Follow:
-    following = models.ForeignKey(User, on_delete=models.CASCADE)
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = [
-            'follower',
-            'following',
-        ]
+class Follow(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    follower = models.ForeignKey(User,
+                                 related_name='follower',
+                                 on_delete=models.CASCADE)

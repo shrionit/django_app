@@ -210,6 +210,21 @@
                                         </td>
                                     </tr>
                                     {% endfor %}
+                                    {% for plist in playlistdata %}
+                                    <tr scope="row" class="playlistrow" data-id={{ plist.id }} data-is='unchecked'>
+                                        <td class="col-lg-1 col-2 col-sm-1" data-hint='plistid'>{{plist.id}}</td>
+                                        <td class='col-lg-1 col-2 col-sm-1 d-none' data-hint='isselect'><i
+                                                class="far fa-square fa-lg"></i></td>
+                                        <td class="col-lg-8 col-8 col-sm-8" data-hint='plistTitle'>
+                                            {{plist.playlist_title}}
+                                        </td>
+                                        <td class="col-lg-2 col-2 col-sm-2 d-none d-sm-block" data-hint='plistUser'>
+                                            {{plist.playlist_user}}</td>
+                                        <td class='col-lg-1 col-2 col-sm-1 text-center' data-hint='plistScope'>
+                                            {{plist.playlist_scope}}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                             {% endif %}

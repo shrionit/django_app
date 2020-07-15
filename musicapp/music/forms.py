@@ -24,3 +24,12 @@ class Song(forms.ModelForm):
             'song_title', 'song_artist', 'song_duration', 'song_scope',
             'song_released_on'
         ]
+
+
+class Follow(forms.ModelForm):
+    class Meta:
+        model = Follow
+        fields = [
+            'user',
+            'follower',
+        ]

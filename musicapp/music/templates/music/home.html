@@ -9,9 +9,15 @@
 
 {% block current_username %}
 {{user.username}}
-{% endblock current_username %}Ram
+{% endblock current_username %}
 {% block content %}
+<!-- Popover -->
 
+<div id="followoptions" class='d-none'>
+    hello
+</div>
+
+<!-- End popover -->
 <div class="container-fluid px-0">
     <div id="demo" class="carousel bg-dark slide {% if user.song_set.count == 0 %}d-none{% endif %}"
         style="height:500px;" data-ride="carousel">
@@ -48,7 +54,8 @@
 
     </div>
     <div class="container m-5">
-        <div class="row">
+        <div
+            class="row rounded-lg border border-right-0 border-left-5 border-danger my-5 px-5 shadow p-4 mb-4 bg-white">
             <div class="diaplay-3">
                 <div class="row-head">
                     <h4>Latest Playlists</h4>
@@ -56,17 +63,22 @@
             </div>
             <div class="card-columns">
                 {% for plist in otheruserplaylist %}
-                <div class="card">
+                <div class="card" uid="{{plist.playlist_user.id}}">
                     <img class="card-img-top" src="/media/img/default-cover.jpg" alt="{{ plist.playlist_title }}">
                     <div class="card-body">
                         <h4 class="card-title">{{plist.playlist_title}}</h4>
-                        <p class="card-text">{{plist.playlist_user.username}}</p>
+                        <p class="card-link"><button type="button" class="btn btn-primary text-center follow"
+                                data-toggle="tooltip" data-title="Follow"
+                                data-placement='right'>{{plist.playlist_user.username}} <i
+                                    class="fas fa-user-{% if plist.playlist_user not in myfollowings %}plus{% else %}minus{% endif %} fa-xs fa-fw"></i></button>
+                        </p>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
-        <div class="row">
+        <div
+            class="row rounded-lg border border-right-0 border-left-5 border-danger my-5 px-5 shadow p-4 mb-4 bg-white">
             <div class="diaplay-3">
                 <div class="row-head">
                     <h4>Following Playlists</h4>
@@ -74,11 +86,15 @@
             </div>
             <div class="card-columns">
                 {% for plist in followingplaylist %}
-                <div class="card">
+                <div class="card" uid="{{plist.playlist_user.id}}">
                     <img class="card-img-top" src="/media/img/default-cover.jpg" alt="{{ plist.playlist_title }}">
                     <div class="card-body">
                         <h4 class="card-title">{{plist.playlist_title}}</h4>
-                        <p class="card-text">{{plist.playlist_user.username}}</p>
+                        <p class="card-link"><button type="button" class="btn btn-primary unfollow"
+                                data-toggle="tooltip" data-title="Unollow"
+                                data-placement='right'>{{plist.playlist_user.username}} <i
+                                    class="fas fa-user-minus fa-xs fa-fw float right"></i></button>
+                        </p>
                     </div>
                 </div>
                 {% endfor %}
@@ -86,5 +102,17 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
+
+{% block script_js %}
+<script>
+    localStorage.setItem('csrf', "{{ csrf_token }}");
+    localStorage.setItem('uid', "{{ user.id }}");
+    $("[data-toggle=popover]").popover({
+        animation: true,
+        html: true,
+        trigger: "hover",
+        placement: "right",
+    });
+</script>
+{% endblock script_js %}

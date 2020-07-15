@@ -1,4 +1,47 @@
 $(document).ready(function () {
+  function follow(me, who) {
+    let Url = "/api/follow/" + me;
+    let csrf = localStorage.getItem("csrf");
+    $.ajax({
+      type: "POST",
+      url: Url,
+      beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrf);
+        }
+      },
+      data: {
+        csrfmiddlewaretoken: csrf,
+        who: parseInt(who),
+      },
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+      },
+    });
+  }
+  function unfollow(me, who) {
+    let Url = "/api/unfollow/" + me;
+    let csrf = localStorage.getItem("csrf");
+    $.ajax({
+      type: "DELETE",
+      url: Url,
+      beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrf);
+        }
+      },
+      data: {
+        csrfmiddlewaretoken: csrf,
+        who: who,
+      },
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+      },
+    });
+  }
+
   function attachSong(songinfo) {
     let template = `
                     <tr scope="row" data-id=${songinfo.songid} data-is='unchecked'>
@@ -433,5 +476,15 @@ $(document).ready(function () {
     } else {
       $(this).attr("data-target", "");
     }
+  });
+
+  $(".follow").on("click", function () {
+    p = $(this).parents("[class=card]");
+    follow(localStorage.getItem("uid"), p.attr("uid"));
+  });
+
+  $(".unfollow").on("click", function () {
+    p = $(this).parents("[class=card]");
+    unfollow(localStorage.getItem("uid"), p.attr("uid"));
   });
 });

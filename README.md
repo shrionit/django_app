@@ -26,6 +26,7 @@ TWO_USERS
 admin: root@root
 user0: user_0@Abcd_987654
 user1: user_1@Abcd_987654
+user2: user_2@Abcd_987654
 ```
 
 ## [DRF] View

@@ -349,14 +349,13 @@ def follow_user(request, uid):
     if usr.is_authenticated:
         who = request.data['who']
         who = User.objects.get(id=who)
-        if not Follow.objects.filter(follower=usr, following=who).exists():
-            follower = Follow.objects.get_or_create(follower=usr,
-                                                    following=who)
+        if not Follow.objects.filter(user=who, follower=usr).exists():
+            follower = Follow.objects.get_or_create(user=who, follower=usr)[0]
             follower.save()
             return Response({
                 'Already': '!FOLLOW',
-                'followerid': follower.follower,
-                'following': follower.following,
+                'followerid': follower.follower.id,
+                'following': follower.user.id,
             })
         else:
             return Response({
@@ -375,12 +374,11 @@ def unfollow_user(request, uid):
     if usr.is_authenticated:
         who = request.data['who']
         who = User.objects.get(id=who)
-        if not Follow.objects.filter(follower=usr, following=who).exists():
-            unfollowed = Follow.objects.get(follower=usr,
-                                            following=who).delete()
+        if Follow.objects.filter(user=who, follower=usr).exists():
+            unfollowed = Follow.objects.get(user=who, follower=usr).delete()
             return Response({
                 'Already': 'FOLLOW',
-                'followerid': follower.follower,
+                'followerid': uid,
                 'unfollowedid': who
             })
         else:
