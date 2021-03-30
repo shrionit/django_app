@@ -3,7 +3,7 @@ Django==3.0.8
 django-crispy-forms==1.9.2
 djangorestframework==3.11.0
 Pillow==7.2.0
-Pygments==2.6.1
+Pygments==2.7.4
 pytz==2020.1
 sqlparse==0.3.1
 tinytag==1.4.0
